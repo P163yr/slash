@@ -4,9 +4,14 @@ import urllib.request
 import urllib.parse
 import time
 import base64
+import os
 
 WORKFLOW_PATH = "/workspace/workflow.json"
 COMFYUI_API_URL = "http://127.0.0.1:8188"
+INPUT_DIR = "/workspace/ComfyUI/input/"
+
+# Ensure input directory exists
+os.makedirs(INPUT_DIR, exist_ok=True)
 
 def load_workflow():
     with open(WORKFLOW_PATH, "r") as f:
@@ -27,13 +32,35 @@ def handler(job):
     job_input = job["input"]
     workflow = load_workflow()
     
+    # 1. Handle Base64 Image Input (Node 27: LoadImage)
+    if "image_base64" in job_input:
+        # Decode the base64 string
+        img_data = base64.b64decode(job_input["image_base64"])
+        temp_filename = "api_input_pose.png"
+        temp_path = os.path.join(INPUT_DIR, temp_filename)
+        
+        # Save to ComfyUI's input folder
+        with open(temp_path, "wb") as f:
+            f.write(img_data)
+            
+        # Update Node 27 to use this new image
+        workflow["27"]["inputs"]["image"] = temp_filename
+        workflow["27"]["inputs"]["upload"] = "image"
+
+    # 2. Update Positive Prompt (Node 3)
     if "prompt" in job_input:
         workflow["3"]["inputs"]["text"] = job_input["prompt"]
+    
+    # 3. Update Negative Prompt (Node 4)
     if "negative_prompt" in job_input:
         workflow["4"]["inputs"]["text"] = job_input["negative_prompt"]
+        
+    # 4. Update Seed (Node 7)
     if "seed" in job_input:
         workflow["7"]["inputs"]["seed"] = int(job_input["seed"])
         workflow["7"]["inputs"]["control_after_generate"] = "fixed"
+        
+    # 5. Update LoRA (Node 31)
     if "lora_name" in job_input and job_input["lora_name"] != "None":
         workflow["31"]["inputs"]["lora_name"] = job_input["lora_name"]
         workflow["31"]["inputs"]["strength_model"] = float(job_input.get("lora_strength", 0.8))
@@ -41,17 +68,20 @@ def handler(job):
     else:
         workflow["31"]["inputs"]["lora_name"] = "None"
 
+    # 6. Queue the generation
     try:
         prompt_id = queue_prompt(workflow)["prompt_id"]
     except Exception as e:
         return {"error": f"Failed to queue prompt: {str(e)}"}
     
+    # 7. Wait for completion
     while True:
         history = json.loads(urllib.request.urlopen(f"{COMFYUI_API_URL}/history/{prompt_id}").read())
         if prompt_id in history:
             break
         time.sleep(1)
         
+    # 8. Get the upscaled image (Node 35)
     try:
         output_info = history[prompt_id]["outputs"]["35"]["images"][0]
         image_data = get_image(output_info["filename"], output_info["subfolder"], output_info["type"])

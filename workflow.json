@@ -1,0 +1,146 @@
+{
+  "id": "a7144f17-fafb-410d-b68b-02529e9ea22d",
+  "revision": 0,
+  "last_node_id": 35,
+  "last_link_id": 36,
+  "nodes": [
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [-436.1884765625, 100.86083984375],
+      "size": [406.5498046875, 110.36192321777344],
+      "widgets_values": [896, 1152, 1]
+    },
+    {
+      "id": 6,
+      "type": "CheckpointLoaderSimple",
+      "pos": [-444.86676025390625, -72.60136413574219],
+      "size": [424.0978088378906, 115.12889099121094],
+      "widgets_values": ["bismuthIllustrious_v80.safetensors"]
+    },
+    {
+      "id": 31,
+      "type": "LoraLoader",
+      "pos": [20, -70],
+      "size": [315, 126],
+      "inputs": [{"name": "model", "type": "MODEL", "link": 2}, {"name": "clip", "type": "CLIP", "link": 3}],
+      "outputs": [{"name": "MODEL", "type": "MODEL", "links": [26, 33]}, {"name": "CLIP", "type": "CLIP", "links": [27, 28]}],
+      "widgets_values": ["None", 0.8, 0.8]
+    },
+    {
+      "id": 3,
+      "type": "CLIPTextEncode",
+      "pos": [41.763160705566406, 100],
+      "size": [390.68511962890625, 121.35400390625],
+      "inputs": [{"name": "clip", "type": "CLIP", "link": 27}, {"name": "text", "type": "STRING", "widget": {"name": "text"}}],
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING", "links": [22]}],
+      "widgets_values": ["masterpiece, best quality, 8k, ultra-detailed, 1girl, solo, detailed beautiful eyes, symmetrical eyes, perfect pupils, intricate eye details, sharp focus on face"]
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [43.019229888916016, 270],
+      "size": [388.1728515625, 111.3050537109375],
+      "inputs": [{"name": "clip", "type": "CLIP", "link": 28}, {"name": "text", "type": "STRING", "widget": {"name": "text"}}],
+      "outputs": [{"name": "CONDITIONING", "type": "CONDITIONING", "links": [18]}],
+      "widgets_values": ["nsfw, (worst quality:2), (low quality:2), bad eyes, distorted eyes, asymmetrical eyes, weird pupils, mutated eyes, cross-eyed, bad anatomy, bad hands"]
+    },
+    {
+      "id": 27,
+      "type": "LoadImage",
+      "pos": [541.2747192382812, -86.60906982421875],
+      "size": [270, 314.0000305175781],
+      "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [14, 25]}],
+      "widgets_values": ["example.png", "image"]
+    },
+    {
+      "id": 24,
+      "type": "AIO_Preprocessor",
+      "pos": [862.1396484375, 255.20816040039062],
+      "size": [255.52688598632812, 83.38170623779297],
+      "inputs": [{"name": "image", "type": "IMAGE", "link": 14}, {"name": "preprocessor", "type": "COMBO", "widget": {"name": "preprocessor"}}, {"name": "resolution", "type": "INT", "widget": {"name": "resolution"}}],
+      "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [15, 16]}],
+      "widgets_values": ["AnimeLineArtPreprocessor", 1024]
+    },
+    {
+      "id": 23,
+      "type": "ControlNetLoader",
+      "pos": [854.0388793945312, -126.06681823730469],
+      "size": [258.114013671875, 60.072593688964844],
+      "outputs": [{"name": "CONTROL_NET", "type": "CONTROL_NET", "links": [11]}],
+      "widgets_values": ["controlnet-depth-sdxl-1.0.safetensors"]
+    },
+    {
+      "id": 22,
+      "type": "ControlNetApplyAdvanced",
+      "pos": [860.4742431640625, 1.9627376794815063],
+      "size": [256.2177734375, 203.4542999267578],
+      "inputs": [{"name": "positive", "type": "CONDITIONING", "link": 22}, {"name": "negative", "type": "CONDITIONING", "link": 18}, {"name": "control_net", "type": "CONTROL_NET", "link": 11}, {"name": "image", "type": "IMAGE", "link": 16}, {"name": "vae", "type": "VAE", "link": 21}],
+      "outputs": [{"name": "positive", "type": "CONDITIONING", "links": [19, 35]}, {"name": "negative", "type": "CONDITIONING", "links": [20, 36]}],
+      "widgets_values": [0.8, 0, 1]
+    },
+    {
+      "id": 7,
+      "type": "KSampler",
+      "pos": [1625.0810546875, -100.08255004882812],
+      "size": [250, 280],
+      "inputs": [{"name": "model", "type": "MODEL", "link": 26}, {"name": "positive", "type": "CONDITIONING", "link": 19}, {"name": "negative", "type": "CONDITIONING", "link": 20}, {"name": "latent_image", "type": "LATENT", "link": 5}, {"name": "seed", "type": "INT", "widget": {"name": "seed"}}, {"name": "steps", "type": "INT", "widget": {"name": "steps"}}, {"name": "cfg", "type": "FLOAT", "widget": {"name": "cfg"}}, {"name": "sampler_name", "type": "COMBO", "widget": {"name": "sampler_name"}}, {"name": "scheduler", "type": "COMBO", "widget": {"name": "scheduler"}}, {"name": "denoise", "type": "FLOAT", "widget": {"name": "denoise"}}],
+      "outputs": [{"name": "LATENT", "type": "LATENT", "links": [6, 34]}],
+      "widgets_values": [0, "randomize", 30, 5.0, "euler", "normal", 1]
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [1629.357421875, 234.29615783691406],
+      "size": [250, 100],
+      "inputs": [{"name": "samples", "type": "LATENT", "link": 6}, {"name": "vae", "type": "VAE", "link": 7}],
+      "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [8, 24]}]
+    },
+    {
+      "id": 11,
+      "type": "SaveImage",
+      "pos": [1926.3079833984375, -97.70732116699219],
+      "size": [377.5301818847656, 429.0626220703125],
+      "inputs": [{"name": "images", "type": "IMAGE", "link": 8}],
+      "widgets_values": ["ComfyUI_Base"]
+    },
+    {
+      "id": 32,
+      "type": "LatentUpscaleBy",
+      "pos": [1625, 400],
+      "size": [250, 82],
+      "inputs": [{"name": "samples", "type": "LATENT", "link": 34}, {"name": "upscale_method", "type": "COMBO", "widget": {"name": "upscale_method"}}, {"name": "scale_by", "type": "FLOAT", "widget": {"name": "scale_by"}}],
+      "outputs": [{"name": "LATENT", "type": "LATENT", "links": [29]}],
+      "widgets_values": ["nearest-exact", 1.5]
+    },
+    {
+      "id": 33,
+      "type": "KSampler",
+      "pos": [1925, 400],
+      "size": [250, 280],
+      "inputs": [{"name": "model", "type": "MODEL", "link": 33}, {"name": "positive", "type": "CONDITIONING", "link": 35}, {"name": "negative", "type": "CONDITIONING", "link": 36}, {"name": "latent_image", "type": "LATENT", "link": 29}, {"name": "seed", "type": "INT", "widget": {"name": "seed"}}, {"name": "steps", "type": "INT", "widget": {"name": "steps"}}, {"name": "cfg", "type": "FLOAT", "widget": {"name": "cfg"}}, {"name": "sampler_name", "type": "COMBO", "widget": {"name": "sampler_name"}}, {"name": "scheduler", "type": "COMBO", "widget": {"name": "scheduler"}}, {"name": "denoise", "type": "FLOAT", "widget": {"name": "denoise"}}],
+      "outputs": [{"name": "LATENT", "type": "LATENT", "links": [30]}],
+      "widgets_values": [0, "fixed", 15, 5.0, "euler", "normal", 0.35]
+    },
+    {
+      "id": 34,
+      "type": "VAEDecode",
+      "pos": [2225, 400],
+      "size": [210, 46],
+      "inputs": [{"name": "samples", "type": "LATENT", "link": 30}, {"name": "vae", "type": "VAE", "link": 7}],
+      "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [31]}]
+    },
+    {
+      "id": 35,
+      "type": "SaveImage",
+      "pos": [2485, 400],
+      "size": [377, 429],
+      "inputs": [{"name": "images", "type": "IMAGE", "link": 31}],
+      "widgets_values": ["ComfyUI_Upscaled"]
+    }
+  ],
+  "links": [
+    [2, 6, 0, 31, 0, "MODEL"], [3, 6, 1, 31, 1, "CLIP"], [5, 5, 0, 7, 3, "LATENT"], [6, 7, 0, 8, 0, "LATENT"], [7, 6, 2, 8, 1, "VAE"], [8, 8, 0, 11, 0, "IMAGE"], [11, 23, 0, 22, 2, "CONTROL_NET"], [14, 27, 0, 24, 0, "IMAGE"], [15, 24, 0, 28, 0, "IMAGE"], [16, 24, 0, 22, 3, "IMAGE"], [18, 4, 0, 22, 1, "CONDITIONING"], [19, 22, 0, 7, 1, "CONDITIONING"], [20, 22, 1, 7, 2, "CONDITIONING"], [21, 6, 2, 22, 4, "VAE"], [22, 3, 0, 22, 0, "CONDITIONING"], [24, 8, 0, 30, 1, "IMAGE"], [25, 27, 0, 30, 0, "IMAGE"], [26, 31, 0, 7, 0, "MODEL"], [27, 31, 1, 3, 0, "CLIP"], [28, 31, 1, 4, 0, "CLIP"], [29, 32, 0, 33, 3, "LATENT"], [30, 33, 0, 34, 0, "LATENT"], [31, 34, 0, 35, 0, "IMAGE"], [33, 31, 0, 33, 0, "MODEL"], [34, 7, 0, 32, 0, "LATENT"], [35, 22, 0, 33, 1, "CONDITIONING"], [36, 22, 1, 33, 2, "CONDITIONING"]
+  ],
+  "version": 0.4
+}

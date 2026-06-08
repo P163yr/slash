@@ -1,10 +1,10 @@
 {
   "3": {
-    "inputs": {"text": "masterpiece, best quality, 8k, ultra-detailed, 1girl, solo, detailed beautiful eyes, symmetrical eyes, perfect pupils, intricate eye details, sharp focus on face, wearing a form-fitting black sports bra, toned abdomen, gym background", "clip": ["31", 1]},
+    "inputs": {"text": "masterpiece, best quality", "clip": ["31", 1]},
     "class_type": "CLIPTextEncode"
   },
   "4": {
-    "inputs": {"text": "nsfw, (worst quality:2), (low quality:2), bad eyes, distorted eyes, asymmetrical eyes, weird pupils, mutated eyes, cross-eyed, bad anatomy, bad hands", "clip": ["31", 1]},
+    "inputs": {"text": "nsfw, worst quality, low quality", "clip": ["31", 1]},
     "class_type": "CLIPTextEncode"
   },
   "5": {
@@ -16,7 +16,7 @@
     "class_type": "CheckpointLoaderSimple"
   },
   "7": {
-    "inputs": {"seed": 123456789, "steps": 30, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 1.0, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["5", 0]},
+    "inputs": {"seed": 0, "steps": 30, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 1.0, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["5", 0]},
     "class_type": "KSampler"
   },
   "8": {
@@ -32,11 +32,11 @@
     "class_type": "ControlNetApplyAdvanced"
   },
   "23": {
-    "inputs": {"control_net_name": "controlnet-depth-sdxl-1.0.safetensors"},
+    "inputs": {"control_net_name": "controlnet-openpose-illustrious-xl.safetensors"},
     "class_type": "ControlNetLoader"
   },
   "24": {
-    "inputs": {"preprocessor": "AnimeLineArtPreprocessor", "resolution": 1024, "image": ["27", 0]},
+    "inputs": {"preprocessor": "OpenposePreprocessor", "resolution": 1024, "image": ["27", 0]},
     "class_type": "AIO_Preprocessor"
   },
   "27": {
@@ -52,7 +52,7 @@
     "class_type": "LatentUpscaleBy"
   },
   "33": {
-    "inputs": {"seed": 123456789, "steps": 15, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 0.35, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["32", 0]},
+    "inputs": {"seed": 0, "steps": 15, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 0.35, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["32", 0]},
     "class_type": "KSampler"
   },
   "34": {

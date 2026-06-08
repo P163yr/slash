@@ -35,4 +35,15 @@ RUN chmod +x /workspace/start.sh
 # 8. Set entrypoint
 WORKDIR /workspace
 EXPOSE 8188
+
+# Pre-download the 3 tiny ControlNet preprocessor models (~200MB total)
+# This prevents them from downloading on every single API request
+RUN mkdir -p /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts/lllyasviel/Annotators/ && \
+    cd /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts/lllyasviel/Annotators/ && \
+    aria2c -x 16 -s 16 -k 1M -q "https://huggingface.co/lllyasviel/Annotators/resolve/main/body_pose_model.pth" && \
+    aria2c -x 16 -s 16 -k 1M -q "https://huggingface.co/lllyasviel/Annotators/resolve/main/hand_pose_model.pth" && \
+    aria2c -x 16 -s 16 -k 1M -q "https://huggingface.co/lllyasviel/Annotators/resolve/main/facenet.pth"
+
+EXPOSE 8188
+ENTRYPOINT ["/workspace/start.sh"]
 ENTRYPOINT ["/workspace/start.sh"]

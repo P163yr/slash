@@ -1,5 +1,5 @@
-# UPGRADED to PyTorch 2.2.2 to support torch.library.custom_op
-FROM runpod/pytorch:2.2.2-py3.10-cuda12.1.1-devel-ubuntu22.04
+# CORRECTED: Using the official RunPod PyTorch 2.2.0 tag
+FROM runpod/pytorch:2.2.0-py3.10-cuda12.1.1-devel-ubuntu22.04
 
 # 1. Install system dependencies
 RUN apt-get update && apt-get install -y wget git ffmpeg libsm6 libxext6 aria2 && rm -rf /var/lib/apt/lists/*
@@ -31,5 +31,5 @@ RUN chmod +x /workspace/start.sh
 
 # 6. Set entrypoint
 WORKDIR /workspace
-EXPOSE 127.0.0.1:8188
+EXPOSE 8188
 ENTRYPOINT ["/workspace/start.sh"]

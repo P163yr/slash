@@ -1,4 +1,9 @@
 #!/bin/bash
+
+echo "🔗 Setting up model symlinks from Network Volume..."
+mkdir -p /runpod-volume/ComfyUI/models
+ln -sfn /runpod-volume/ComfyUI/models /workspace/ComfyUI/models
+
 echo "Starting ComfyUI in the background..."
 python /workspace/ComfyUI/main.py --listen 0.0.0.0 --port 8188 --disable-auto-launch &
 

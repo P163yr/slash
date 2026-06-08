@@ -16,7 +16,7 @@ def load_workflow():
     with open(WORKFLOW_PATH, "r") as f:
         data = json.load(f)
     
-    # Clean keys (removes trailing spaces that cause KeyError)
+    # CRITICAL: Clean all keys to remove any accidental trailing spaces from ComfyUI export
     cleaned_data = {}
     for k, v in data.items():
         clean_key = str(k).strip()
@@ -52,19 +52,23 @@ def handler(job):
             f.write(img_data)
         workflow["27"]["inputs"]["image"] = temp_filename
 
-    # 2. Prompts (Node 3 & 4)
+    # 2. Checkpoint (Node 6)
+    if "checkpoint_name" in job_input:
+        workflow["6"]["inputs"]["ckpt_name"] = job_input["checkpoint_name"]
+
+    # 3. Prompts (Node 3 & 4)
     if "prompt" in job_input:
         workflow["3"]["inputs"]["text"] = job_input["prompt"]
     if "negative_prompt" in job_input:
         workflow["4"]["inputs"]["text"] = job_input["negative_prompt"]
         
-    # 3. Resolution (Node 5)
+    # 4. Resolution (Node 5)
     if "width" in job_input:
         workflow["5"]["inputs"]["width"] = int(job_input["width"])
     if "height" in job_input:
         workflow["5"]["inputs"]["height"] = int(job_input["height"])
 
-    # 4. Sampling Params (Node 7 & 33)
+    # 5. Sampling Params (Node 7 & 33)
     if "seed" in job_input:
         seed_val = int(job_input["seed"])
         workflow["7"]["inputs"]["seed"] = seed_val
@@ -78,7 +82,7 @@ def handler(job):
     if "denoise" in job_input:
         workflow["33"]["inputs"]["denoise"] = float(job_input["denoise"])
 
-    # 5. LoRA (Node 31)
+    # 6. LoRA (Node 31)
     if "lora_name" in job_input:
         workflow["31"]["inputs"]["lora_name"] = job_input["lora_name"]
     if "lora_strength" in job_input:
@@ -86,19 +90,19 @@ def handler(job):
         workflow["31"]["inputs"]["strength_model"] = strength
         workflow["31"]["inputs"]["strength_clip"] = strength
 
-    # 6. ControlNet Model & Strength (Node 23 & 22)
+    # 7. ControlNet Model & Strength (Node 23 & 22)
     if "controlnet_model" in job_input:
         workflow["23"]["inputs"]["control_net_name"] = job_input["controlnet_model"]
     if "controlnet_strength" in job_input:
         workflow["22"]["inputs"]["strength"] = float(job_input["controlnet_strength"])
 
-    # 7. Preprocessor (Node 24)
+    # 8. Preprocessor (Node 24)
     if "preprocessor" in job_input:
         workflow["24"]["inputs"]["preprocessor"] = job_input["preprocessor"]
     if "preprocessor_resolution" in job_input:
         workflow["24"]["inputs"]["resolution"] = int(job_input["preprocessor_resolution"])
 
-    # 8. Queue and wait
+    # 9. Queue and wait
     try:
         prompt_id = queue_prompt(workflow)["prompt_id"]
     except Exception as e:

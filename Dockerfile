@@ -18,9 +18,9 @@ RUN cd /workspace/ComfyUI/custom_nodes && \
     cd /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux && \
     pip install -r requirements.txt
 
-# 5. CRITICAL FIX: Force Upgrade PyTorch & Fix NumPy
-# Custom nodes often pin old torch versions in their requirements.txt. 
-# We force upgrade to 2.4.0+ here to override them and support comfy_kitchen.
+# 5. CRITICAL FIX: Force upgrade PyTorch & Fix NumPy
+# This MUST come AFTER installing custom node requirements to prevent them from downgrading PyTorch.
+# comfy_kitchen requires PyTorch >= 2.2.0 for torch.library.custom_op
 RUN pip install --upgrade torch torchvision torchaudio
 RUN pip install "numpy<2.0.0"
 

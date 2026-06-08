@@ -1,100 +1,66 @@
 {
   "3": {
-    "inputs": {
-      "text": "masterpiece, best quality, 8k, ultra-detailed, 1girl, solo, detailed beautiful eyes, symmetrical eyes, perfect pupils, intricate eye details, sharp focus on face",
-      "clip": ["31", 1]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": { "title": "CLIP Text Encode (Prompt)" }
+    "inputs": {"text": "masterpiece, best quality, 8k, ultra-detailed, 1girl, solo, detailed beautiful eyes, symmetrical eyes, perfect pupils, intricate eye details, sharp focus on face, wearing a form-fitting black sports bra, toned abdomen, gym background", "clip": ["31", 1]},
+    "class_type": "CLIPTextEncode"
   },
   "4": {
-    "inputs": {
-      "text": "nsfw, (worst quality:2), (low quality:2), bad eyes, distorted eyes, asymmetrical eyes, weird pupils, mutated eyes, cross-eyed, bad anatomy, bad hands",
-      "clip": ["31", 1]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": { "title": "CLIP Text Encode (Prompt)" }
+    "inputs": {"text": "nsfw, (worst quality:2), (low quality:2), bad eyes, distorted eyes, asymmetrical eyes, weird pupils, mutated eyes, cross-eyed, bad anatomy, bad hands", "clip": ["31", 1]},
+    "class_type": "CLIPTextEncode"
   },
   "5": {
-    "inputs": { "width": 896, "height": 1152, "batch_size": 1 },
-    "class_type": "EmptyLatentImage",
-    "_meta": { "title": "Empty Latent Image" }
+    "inputs": {"width": 896, "height": 1152, "batch_size": 1},
+    "class_type": "EmptyLatentImage"
   },
   "6": {
-    "inputs": { "ckpt_name": "bismuthIllustrious_v80.safetensors" },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": { "title": "Load Checkpoint" }
+    "inputs": {"ckpt_name": "bismuthIllustrious_v80.safetensors"},
+    "class_type": "CheckpointLoaderSimple"
   },
   "7": {
-    "inputs": {
-      "seed": 123456789, "steps": 30, "cfg": 5, "sampler_name": "euler", "scheduler": "normal", "denoise": 1,
-      "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["5", 0]
-    },
-    "class_type": "KSampler",
-    "_meta": { "title": "KSampler" }
+    "inputs": {"seed": 123456789, "steps": 30, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 1.0, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["5", 0]},
+    "class_type": "KSampler"
   },
   "8": {
-    "inputs": { "samples": ["7", 0], "vae": ["6", 2] },
-    "class_type": "VAEDecode",
-    "_meta": { "title": "VAE Decode" }
+    "inputs": {"samples": ["7", 0], "vae": ["6", 2]},
+    "class_type": "VAEDecode"
   },
   "11": {
-    "inputs": { "filename_prefix": "ComfyUI_Base", "images": ["8", 0] },
-    "class_type": "SaveImage",
-    "_meta": { "title": "Save Image" }
+    "inputs": {"filename_prefix": "ComfyUI_Base", "images": ["8", 0]},
+    "class_type": "SaveImage"
   },
   "22": {
-    "inputs": {
-      "strength": 0.8, "start_percent": 0, "end_percent": 1,
-      "positive": ["3", 0], "negative": ["4", 0], "control_net": ["23", 0], "image": ["24", 0], "vae": ["6", 2]
-    },
-    "class_type": "ControlNetApplyAdvanced",
-    "_meta": { "title": "Apply ControlNet" }
+    "inputs": {"strength": 0.8, "start_percent": 0.0, "end_percent": 1.0, "positive": ["3", 0], "negative": ["4", 0], "control_net": ["23", 0], "image": ["24", 0], "vae": ["6", 2]},
+    "class_type": "ControlNetApplyAdvanced"
   },
   "23": {
-    "inputs": { "control_net_name": "controlnet-depth-sdxl-1.0.safetensors" },
-    "class_type": "ControlNetLoader",
-    "_meta": { "title": "Load ControlNet Model" }
+    "inputs": {"control_net_name": "controlnet-depth-sdxl-1.0.safetensors"},
+    "class_type": "ControlNetLoader"
   },
   "24": {
-    "inputs": { "preprocessor": "AnimeLineArtPreprocessor", "resolution": 1024, "image": ["27", 0] },
-    "class_type": "AIO_Preprocessor",
-    "_meta": { "title": "AIO Aux Preprocessor" }
+    "inputs": {"preprocessor": "AnimeLineArtPreprocessor", "resolution": 1024, "image": ["27", 0]},
+    "class_type": "AIO_Preprocessor"
   },
   "27": {
-    "inputs": { "image": "api_input_pose.png" },
-    "class_type": "LoadImage",
-    "_meta": { "title": "Load Image" }
+    "inputs": {"image": "api_input_pose.png"},
+    "class_type": "LoadImage"
   },
   "31": {
-    "inputs": {
-      "lora_name": "None", "strength_model": 0.8, "strength_clip": 0.8,
-      "model": ["6", 0], "clip": ["6", 1]
-    },
-    "class_type": "LoraLoader",
-    "_meta": { "title": "Load LoRA" }
+    "inputs": {"lora_name": "None", "strength_model": 0.8, "strength_clip": 0.8, "model": ["6", 0], "clip": ["6", 1]},
+    "class_type": "LoraLoader"
   },
   "32": {
-    "inputs": { "upscale_method": "nearest-exact", "scale_by": 1.5, "samples": ["7", 0] },
-    "class_type": "LatentUpscaleBy",
-    "_meta": { "title": "Upscale Latent By" }
+    "inputs": {"upscale_method": "nearest-exact", "scale_by": 1.5, "samples": ["7", 0]},
+    "class_type": "LatentUpscaleBy"
   },
   "33": {
-    "inputs": {
-      "seed": 123456789, "steps": 15, "cfg": 5, "sampler_name": "euler", "scheduler": "normal", "denoise": 0.35,
-      "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["32", 0]
-    },
-    "class_type": "KSampler",
-    "_meta": { "title": "KSampler (Upscale)" }
+    "inputs": {"seed": 123456789, "steps": 15, "cfg": 5.0, "sampler_name": "euler", "scheduler": "normal", "denoise": 0.35, "model": ["31", 0], "positive": ["22", 0], "negative": ["22", 1], "latent_image": ["32", 0]},
+    "class_type": "KSampler"
   },
   "34": {
-    "inputs": { "samples": ["33", 0], "vae": ["6", 2] },
-    "class_type": "VAEDecode",
-    "_meta": { "title": "VAE Decode" }
+    "inputs": {"samples": ["33", 0], "vae": ["6", 2]},
+    "class_type": "VAEDecode"
   },
   "35": {
-    "inputs": { "filename_prefix": "ComfyUI_Upscaled", "images": ["34", 0] },
-    "class_type": "SaveImage",
-    "_meta": { "title": "Save Image (Upscaled)" }
+    "inputs": {"filename_prefix": "ComfyUI_Upscaled", "images": ["34", 0]},
+    "class_type": "SaveImage"
   }
 }

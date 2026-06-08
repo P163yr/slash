@@ -10,12 +10,24 @@ WORKFLOW_PATH = "/workspace/workflow.json"
 COMFYUI_API_URL = "http://127.0.0.1:8188"
 INPUT_DIR = "/workspace/ComfyUI/input/"
 
-# Ensure input directory exists
 os.makedirs(INPUT_DIR, exist_ok=True)
 
 def load_workflow():
     with open(WORKFLOW_PATH, "r") as f:
-        return json.load(f)
+        data = json.load(f)
+    
+    # Clean up any accidental trailing spaces in keys (common when copy-pasting)
+    cleaned_data = {}
+    for k, v in data.items():
+        clean_key = str(k).strip()
+        if isinstance(v, dict) and "inputs" in v:
+            clean_inputs = {}
+            for ik, iv in v["inputs"].items():
+                clean_inputs[str(ik).strip()] = iv
+            v["inputs"] = clean_inputs
+        cleaned_data[clean_key] = v
+        
+    return cleaned_data
 
 def queue_prompt(prompt):
     data = json.dumps({"prompt": prompt}).encode('utf-8')
@@ -34,18 +46,14 @@ def handler(job):
     
     # 1. Handle Base64 Image Input (Node 27: LoadImage)
     if "image_base64" in job_input:
-        # Decode the base64 string
         img_data = base64.b64decode(job_input["image_base64"])
         temp_filename = "api_input_pose.png"
         temp_path = os.path.join(INPUT_DIR, temp_filename)
         
-        # Save to ComfyUI's input folder
         with open(temp_path, "wb") as f:
             f.write(img_data)
             
-        # Update Node 27 to use this new image
         workflow["27"]["inputs"]["image"] = temp_filename
-        workflow["27"]["inputs"]["upload"] = "image"
 
     # 2. Update Positive Prompt (Node 3)
     if "prompt" in job_input:
@@ -55,10 +63,11 @@ def handler(job):
     if "negative_prompt" in job_input:
         workflow["4"]["inputs"]["text"] = job_input["negative_prompt"]
         
-    # 4. Update Seed (Node 7)
+    # 4. Update Seed (Node 7 for Base, and Node 33 for Upscale)
     if "seed" in job_input:
-        workflow["7"]["inputs"]["seed"] = int(job_input["seed"])
-        workflow["7"]["inputs"]["control_after_generate"] = "fixed"
+        seed_val = int(job_input["seed"])
+        workflow["7"]["inputs"]["seed"] = seed_val
+        workflow["33"]["inputs"]["seed"] = seed_val
         
     # 5. Update LoRA (Node 31)
     if "lora_name" in job_input and job_input["lora_name"] != "None":

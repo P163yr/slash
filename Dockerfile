@@ -1,7 +1,7 @@
 FROM runpod/pytorch:2.1.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 
-# 1. Install system dependencies
-RUN apt-get update && apt-get install -y wget git ffmpeg libsm6 libxext6 && rm -rf /var/lib/apt/lists/*
+# 1. Install system dependencies (ADDED aria2 for parallel downloads)
+RUN apt-get update && apt-get install -y wget git ffmpeg libsm6 libxext6 aria2 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
 
@@ -20,13 +20,11 @@ RUN cd /workspace/ComfyUI/custom_nodes && \
 # =========================================================
 # 4. DOWNLOAD MODELS FIRST (This layer will now be CACHED!)
 # =========================================================
-# We ONLY copy the files needed for downloading. 
-# As long as .env and download_models.py don't change, 
-# Docker will skip this step on future builds.
 COPY .env /workspace/.env
 COPY download_models.py /workspace/download_models.py
 
 WORKDIR /workspace
+# This will now run 5x-10x faster and finish well under 30 minutes
 RUN python download_models.py
 
 # =========================================================

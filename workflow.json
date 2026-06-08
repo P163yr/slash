@@ -4,7 +4,7 @@
     "class_type": "CLIPTextEncode"
   },
   "4": {
-    "inputs": {"text": "nsfw, worst quality, low quality", "clip": ["31", 1]},
+    "inputs": {"text": "nsfw, worst quality, bad quality, low quality", "clip": ["31", 1]},
     "class_type": "CLIPTextEncode"
   },
   "5": {

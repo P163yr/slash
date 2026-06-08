@@ -1,5 +1,5 @@
-# 1. Use the 2.2.0 base image (We know this tag exists and builds successfully)
-FROM runpod/pytorch:2.2.0-py3.10-cuda12.1.1-devel-ubuntu22.04
+# 1. Use the stable 2.1.1 base (We know this exists)
+FROM runpod/pytorch:2.1.1-py3.10-cuda12.1.1-devel-ubuntu22.04
 
 # 2. Install system dependencies
 RUN apt-get update && apt-get install -y wget git ffmpeg libsm6 libxext6 aria2 && rm -rf /var/lib/apt/lists/*
@@ -18,15 +18,14 @@ RUN cd /workspace/ComfyUI/custom_nodes && \
     cd /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux && \
     pip install -r requirements.txt
 
-# 5. CRITICAL FIX: Force upgrade PyTorch
-# The custom nodes above silently downgraded PyTorch to 2.1.x, causing the custom_op error.
-# We force upgrade it here to the latest 2.x version to restore the custom_op feature.
-RUN pip install --upgrade torch torchvision torchaudio
+# 5. CRITICAL FIX: Upgrade PyTorch to support 'custom_op'
+# We use the specific CUDA 12.1 index to match the base image perfectly.
+RUN pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # 6. Fix NumPy compatibility
 RUN pip install "numpy<2.0.0"
 
-# 7. Copy ONLY the application code
+# 7. Copy your application files
 COPY .env /workspace/.env
 COPY workflow.json /workspace/workflow.json
 COPY handler.py /workspace/handler.py

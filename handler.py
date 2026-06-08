@@ -14,20 +14,7 @@ os.makedirs(INPUT_DIR, exist_ok=True)
 
 def load_workflow():
     with open(WORKFLOW_PATH, "r") as f:
-        data = json.load(f)
-    
-    # Clean up any accidental trailing spaces in keys (common when copy-pasting)
-    cleaned_data = {}
-    for k, v in data.items():
-        clean_key = str(k).strip()
-        if isinstance(v, dict) and "inputs" in v:
-            clean_inputs = {}
-            for ik, iv in v["inputs"].items():
-                clean_inputs[str(ik).strip()] = iv
-            v["inputs"] = clean_inputs
-        cleaned_data[clean_key] = v
-        
-    return cleaned_data
+        return json.load(f)
 
 def queue_prompt(prompt):
     data = json.dumps({"prompt": prompt}).encode('utf-8')
